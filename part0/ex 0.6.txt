@@ -1,0 +1,9 @@
+note over browser:
+user enters note and clicks submit button
+js-function sends post request to server (not form submit)
+end note
+browser->server: POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+server-->browser: HTTP 201 created
+note over browser:
+js-function updates notes in DOM for browser
+end note
