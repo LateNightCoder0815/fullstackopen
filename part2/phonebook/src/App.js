@@ -60,6 +60,11 @@ const App = () => {
             setMyMessage({message: `Changed phone number of ${returnedPerson.name}`, type: 'success'})
             setTimeout(() => {setMyMessage([])}, 5000)
           })
+          .catch( error => {
+            setMyMessage({message: `Information of ${selectedPerson.name} has already been removed from server`, type: 'error'})
+            setPersons(persons.filter((person)=> person.id !== selectedPerson.id))
+            setTimeout(() => {setMyMessage([])}, 5000)
+          })
       }
     }else{
       const personObject = {
