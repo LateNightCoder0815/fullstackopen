@@ -59,10 +59,11 @@ const App = () => {
             setPersons(persons.map(person => person.id !== selectedPerson.id ? person : returnedPerson))
             setMyMessage({message: `Changed phone number of ${returnedPerson.name}`, type: 'success'})
             setTimeout(() => {setMyMessage([])}, 5000)
+            setNewName('')
+            setNewNumber('')
           })
           .catch( error => {
-            setMyMessage({message: `Information of ${selectedPerson.name} has already been removed from server`, type: 'error'})
-            setPersons(persons.filter((person)=> person.id !== selectedPerson.id))
+            setMyMessage({message: error.response.data.error, type: 'error'})
             setTimeout(() => {setMyMessage([])}, 5000)
           })
       }
