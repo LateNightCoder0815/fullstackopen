@@ -80,6 +80,10 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+        .catch(error => {
+          setMyMessage({message: error.response.data.error, type: 'error'})
+          setTimeout(() => {setMyMessage([])}, 5000)
+        })
     }
   }
 
