@@ -1,7 +1,8 @@
-# Exercises of the Full Stack Open 2020 course
+# My solutions for the Full Stack Open 2020 course
 
-This repository contains my solutions for the course [Full Stack Open](https://fullstackopen.com/).
+This repository contains my solutions for the course [Full Stack Open](https://fullstackopen.com/en).
 
-The different parts are separated into folders according to the template.
+The different parts are separated into folders according to the template given.
 
-As recommended, part 3 is uploaded into a separated repository. [part3 solutions](https://github.com/LateNightCoder0815/fullstackopen-part3)
+## Part 3 solutions
+As recommended, part 3 is uploaded into a [separate repository](https://github.com/LateNightCoder0815/fullstackopen-part3).
