@@ -2,7 +2,9 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
+const bcrypt = require('bcrypt')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 
 const initialBlogs = [
@@ -44,7 +46,28 @@ const initialBlogs = [
   }
 ]
 
+const testUser = {
+  username: 'root',
+  password: 'sekret'
+}
+
+const loginUser = async () => {
+  const loggedInUser = await api
+    .post('/api/login')
+    .send(testUser)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  return loggedInUser.body.token
+}
+
 beforeEach(async () => {
+  // Create test user for adding blogs
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash(testUser.password, 10)
+  const user = new User({ username: testUser.username, passwordHash })
+  await user.save()
+
   await Blog.deleteMany({})
 
   const blogObjects = initialBlogs.map(blog => new Blog(blog))
@@ -88,6 +111,7 @@ test('a valid blog can be added', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${await loginUser()}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -110,6 +134,7 @@ test('likes property defaults to 0', async () => {
 
   const response = await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${await loginUser()}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -125,6 +150,7 @@ test('Bad request on missing title and url', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${await loginUser()}`)
     .send(newBlog)
     .expect(400)
 })
@@ -136,14 +162,15 @@ test('create and delete blog', async () => {
     author: 'various',
     url: 'https://jestjs.io/'
   }
-
+  const myUser = await loginUser()
   const response = await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${myUser}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  await api.delete(`/api/blogs/${response.body.id}`).expect(204)
+  await api.delete(`/api/blogs/${response.body.id}`).set('Authorization', `bearer ${myUser}`).expect(204)
 })
 
 
@@ -156,6 +183,7 @@ test('create and change a blog', async () => {
 
   const response = await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${await loginUser()}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -165,6 +193,21 @@ test('create and change a blog', async () => {
   expect(putResponse.body.likes).toBe(newBlog.likes)
 })
 
+test('a blog can not be added without token', async () => {
+  const newBlog = {
+    title: 'Full Stack Open 2020',
+    author: 'Matti Luukkainen',
+    url: 'https://fullstackopen.com/en',
+    likes: 1
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+    .expect('Content-Type', /application\/json/)
+
+})
 
 afterAll(() => {
   mongoose.connection.close()
