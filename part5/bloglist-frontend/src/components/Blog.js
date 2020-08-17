@@ -14,7 +14,7 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
     marginBottom: 5
   }
 
-  const showRemove = { display:  (typeof blog.user != "undefined" && user.username === blog.user.username) ? '' : 'none' }
+  const showRemove = { display:  (typeof blog.user !== 'undefined' && user.username === blog.user.username) ? '' : 'none' }
 
   return(
     <div style={blogStyle}>
