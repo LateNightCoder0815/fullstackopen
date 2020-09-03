@@ -6,6 +6,7 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
+import Navigation from './components/Navigation'
 import blogService from './services/blogs'
 import { useDispatch, useSelector } from 'react-redux'
 import { initBlog } from './reducers/blogReducer'
@@ -31,11 +32,6 @@ const App = () => {
     }
   }, [dispatch])
 
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedBlogappUser')
-    dispatch(setUser(null))
-  }
-
   const match = useRouteMatch('/users/:id')
   const selectedUser = match ? users.find(n => n.id === match.params.id) : null
 
@@ -49,8 +45,8 @@ const App = () => {
         <LoginForm />
         :
         <div>
-          <h1>Blogs</h1>
-          <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+          <Navigation user={user} />
+          <h1>blog app</h1>
           <Switch>
           <Route path='/users/:id'>
             <IndividualUser user={selectedUser} />
