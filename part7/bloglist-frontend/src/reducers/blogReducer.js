@@ -8,6 +8,11 @@ const blogReducer = (state = [], action) => {
       const blogToChange = state.find(n => n.id === id)
       const changedBlog = { ...blogToChange, likes : blogToChange.likes + 1 }
       return state.map(n => n.id === id ? changedBlog : n)
+    case 'ADD_COMMENT':
+      const idBlogComment = action.data.id
+      const blogToComment = state.find(n => n.id === idBlogComment)
+      const addedComment = {...blogToComment, comments : blogToComment.comments.concat(action.comment)}
+      return state.map(n => n.id === idBlogComment ? addedComment : n)
     case 'NEW_BLOG':
       return state.concat(action.data)
     case 'INIT_BLOG':
@@ -17,6 +22,24 @@ const blogReducer = (state = [], action) => {
     default: return state
   }
 }
+
+export const addComment = (blog, comment) => {
+  return async dispatch => {
+    const changedBlog = { ...blog, comments : blog.comments.concat({comment}) }
+    try {
+      const response = await blogService.addComment(changedBlog.id, comment)
+      dispatch({
+        type: 'ADD_COMMENT',
+        data: blog,
+        comment : response
+      })
+      dispatch(notificationSet({ message: `Commented on ${blog.title} by ${blog.author}`, type: 'success' },5))
+    }catch(exception) {
+      dispatch(notificationSet({ message: 'Failed to comment', type: 'error' },5))
+    }
+  }
+}
+
 
 export const increaseLike = blog => {
   return async dispatch => {
