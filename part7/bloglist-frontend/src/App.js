@@ -11,9 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initBlog } from './reducers/blogReducer'
 import { initUsers } from './reducers/usersReducer'
 import { setUser } from './reducers/userReducer'
-import {
-  Switch, Route, Link, useRouteMatch, useHistory
-} from "react-router-dom"
+import { Switch, Route, useRouteMatch, Link } from "react-router-dom"
 
 const App = () => {
   const dispatch = useDispatch()
@@ -41,6 +39,9 @@ const App = () => {
   const match = useRouteMatch('/users/:id')
   const selectedUser = match ? users.find(n => n.id === match.params.id) : null
 
+  const matchBlog = useRouteMatch('/blogs/:id')
+  const selectedBlog = matchBlog ? blogs.find(n => n.id === matchBlog.params.id) : null
+
   return (
     <div>
       <Notification />
@@ -59,13 +60,16 @@ const App = () => {
             {users.map(user =>
               <User key={user.id} user={user} />)}
           </Route> 
+          <Route path='/blogs/:id'>
+          <Blog blog={selectedBlog} user={user}/>
+          </Route>
             <Route path='/'>
               <Togglable buttonLabel='new blog' ref={blogFormRef}>
                 <h2>Create new</h2>
                 <BlogForm blogFormRef={blogFormRef}/>
               </Togglable>
               {blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} user={user}/>)}
+                <p key={blog.id}><Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link></p>)}
             </Route>
           </Switch>
         </div>
