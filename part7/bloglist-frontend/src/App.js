@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react'
 import Blog from './components/Blog'
-import User from './components/User'
 import IndividualUser from './components/IndividualUser'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
@@ -12,7 +11,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initBlog } from './reducers/blogReducer'
 import { initUsers } from './reducers/usersReducer'
 import { setUser } from './reducers/userReducer'
-import { Switch, Route, useRouteMatch, Link } from "react-router-dom"
+import { Switch, Route, useRouteMatch } from "react-router-dom"
+import { Typography} from '@material-ui/core'
+import Blogs from './components/Blogs'
+import Users from './components/Users'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -46,26 +48,25 @@ const App = () => {
         :
         <div>
           <Navigation user={user} />
-          <h1>blog app</h1>
+          <Typography variant="h2" gutterBottom>Blog App</Typography>
           <Switch>
-          <Route path='/users/:id'>
-            <IndividualUser user={selectedUser} />
-          </Route> 
-          <Route path='/users'>
-            <h1>Users</h1>
-            {users.map(user =>
-              <User key={user.id} user={user} />)}
-          </Route> 
-          <Route path='/blogs/:id'>
-          <Blog blog={selectedBlog} user={user}/>
-          </Route>
+            <Route path='/users/:id'>
+              <IndividualUser user={selectedUser} />
+            </Route> 
+            <Route path='/users'>
+              <Typography variant="h3" gutterBottom>Users</Typography>
+              <Users users={users}/>
+            </Route> 
+            <Route path='/blogs/:id'>
+              <Blog blog={selectedBlog} user={user}/>
+            </Route>
             <Route path='/'>
               <Togglable buttonLabel='new blog' ref={blogFormRef}>
                 <h2>Create new</h2>
                 <BlogForm blogFormRef={blogFormRef}/>
               </Togglable>
-              {blogs.map(blog =>
-                <p key={blog.id}><Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link></p>)}
+              <br />
+              <Blogs blogs={blogs}/>
             </Route>
           </Switch>
         </div>

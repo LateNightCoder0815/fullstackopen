@@ -19,7 +19,7 @@ const Navigation = ({user}) => {
         <Button color="inherit" component={Link} to="/users">
           users
         </Button>
-        <em>{user.name} logged in</em> <button onClick={handleLogout}>logout</button>                           
+        <em>{user.name} logged in</em> <Button color="inherit" onClick={handleLogout}>logout</Button>                           
       </Toolbar>
     </AppBar>
   )

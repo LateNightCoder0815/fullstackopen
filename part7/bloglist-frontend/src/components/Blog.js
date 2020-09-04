@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { increaseLike, removeBlog, addComment } from '../reducers/blogReducer'
 import { useDispatch } from 'react-redux'
+import { TextField, Button, Typography } from '@material-ui/core'
 
 const Blog = ({ blog, user }) => {
   const dispatch = useDispatch()
@@ -31,18 +32,16 @@ const Blog = ({ blog, user }) => {
 
   return(
     <div >
-      <h1>
-        {blog.title} {blog.author}
-      </h1>
+      <Typography variant="h3" gutterBottom>{blog.title} {blog.author}</Typography>
       <div>
         <p>{blog.url}</p>
-        <p className='likesDisplay'>{blog.likes} likes <button onClick={() => handleLike(blog)}>like</button></p>
+        <p className='likesDisplay'>{blog.likes} likes <Button variant="contained" color="primary" onClick={() => handleLike(blog)}>like</Button></p>
         <p>added by {blog.user.name}</p>
-        <p style={showRemove}><button onClick={() => handleRemove(blog)}>remove</button></p>
-        <b>comments</b>
+        <p style={showRemove}><Button variant="contained" color="secondary" onClick={() => handleRemove(blog)}>remove</Button></p>
+        <Typography variant="h4" gutterBottom>Comments</Typography>
         <form onSubmit={handleComment}>
-          <input value={newComment} onChange={(event) => setComment(event.target.value)} />
-          <button type="submit">add comment</button>
+          <TextField label='comment' value={newComment} onChange={(event) => setComment(event.target.value)}  />
+          <Button type="submit" variant="contained" color="primary">add comment</Button>
         </form>
         <ul>
         {blog.comments.map(comment => 
