@@ -1,18 +1,11 @@
   
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 import { useQuery, useMutation } from '@apollo/client'
 import Select from "react-select"
 
 const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS)
-  const [ authors, setAuthors ] = useState([])
-  useEffect(() => {
-    if (result.data) {
-      setAuthors(result.data.allAuthors)
-    }
-  }, [result.data])
-
 
   const [ name, setName ] = useState('')
   const [ setBornTo, setSetBornTo ] = useState('')
@@ -34,6 +27,8 @@ const Authors = (props) => {
     setName('')
     setSetBornTo('')
   }
+
+  const authors = result.data.allAuthors
 
   return (
     <div>
