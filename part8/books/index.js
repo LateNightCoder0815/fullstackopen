@@ -26,11 +26,6 @@ let authors = [
   },
 ]
 
-/*
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
-*/
-
 let books = [
   {
     title: 'Clean Code',
@@ -94,7 +89,6 @@ const typeDefs = gql`
 
   type Author {
     name: String!
-    id: String!
     born: Int
     bookCount: Int!
   }
@@ -104,6 +98,19 @@ const typeDefs = gql`
     authorCount: Int!
     allBooks(author: String, genre: String): [Book]!
     allAuthors: [Author!]!
+  }
+
+  type Mutation {
+    addBook(
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String!]!
+    ): Book
+    editAuthor(
+      name: String!
+      setBornTo: Int!
+    ): Author
   }
 `
 
@@ -123,10 +130,31 @@ const resolvers = {
     },
     allAuthors: () => authors
   },
+  Mutation:{
+    addBook: (root, args) => {
+      books = books.concat(args)
+      if(!authors.find((a) => a.name === args.author)){
+        authors = authors.concat({name: args.author})
+      }
+      return args
+    },
+    editAuthor: (root, args) => {
+      const author = authors.find(a => a.name === args.name)
+      if (!author) {
+        return null
+      }
+
+      const updatedAuthor = { ...author, born: args.setBornTo}
+      authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
+      return updatedAuthor
+    }
+  },
   Author: {
     bookCount: (root) => books.reduce((acc,cur) => cur.author === root.name ? acc + 1 : acc, 0)   
   }
 }
+
+
 
 const server = new ApolloServer({
   typeDefs,
