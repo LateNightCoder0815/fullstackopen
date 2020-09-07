@@ -6,6 +6,7 @@ const Book = require('./models/book')
 const Author = require('./models/author')
 const User = require('./models/user')
 const { PubSub } = require('apollo-server')
+const { find } = require('./models/book')
 const pubsub = new PubSub()
 
 const JWT_SECRET = process.env.SECRET
@@ -35,6 +36,7 @@ const typeDefs = gql`
     name: String!
     born: Int
     bookCount: Int!
+    books: [Book!]!
     id: ID!
   }
 
@@ -96,7 +98,7 @@ const resolvers = {
       }
       return filteredBooks
     },
-    allAuthors: () => Author.find({}),
+    allAuthors: () => Author.find({}).populate('books'),
     me: (root, args, context) => {
       return context.currentUser
     }
@@ -114,11 +116,20 @@ const resolvers = {
 
           const book = new Book({... args, author: savedAuthor})
           const result = await book.save()
+
+          // Update reference
+          savedAuthor.books = [result]
+          savedAuthor.save()
+
           pubsub.publish('BOOK_ADDED', { bookAdded: result })
           return result
         }else{
           const book = new Book({... args, author: findAuthor})
           const result = await book.save()
+
+          //Update reference
+          findAuthor.books = findAuthor.books.concat(result)
+          findAuthor.save()
           pubsub.publish('BOOK_ADDED', { bookAdded: result })
           return result
         }
@@ -178,9 +189,8 @@ const resolvers = {
     },
   },
   Author: {
-    bookCount: async (root) => {
-      const booksOfAuthor = await Book.find({ author: root.id })
-      return booksOfAuthor.length
+    bookCount: (root) => {
+      return root.books.length
     }
   }
 }

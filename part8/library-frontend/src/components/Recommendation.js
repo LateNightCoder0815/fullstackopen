@@ -10,7 +10,9 @@ const Recommendation = (props) => {
 
   useEffect(()=> {
     if (result.data !== undefined ){
-      getBooks({ variables: { genre: result.data.me.favoriteGenre } })
+      if (result.data.me !== null ){
+        getBooks({ variables: { genre: result.data.me.favoriteGenre } })
+      }
     } 
   },[result.data]) // eslint-disable-line
 
