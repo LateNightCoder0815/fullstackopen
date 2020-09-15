@@ -6,6 +6,7 @@ import { useStateValue } from "../state";
 import { useParams } from "react-router-dom";
 import { addPatientDetail } from "../state/reducer";
 import { Icon } from "semantic-ui-react";
+import { EntryDetails } from "./EntryDetails";
 
 const PatientDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,12 +32,15 @@ const PatientDetailPage: React.FC = () => {
     return (<></>);
   }
   const genderIcon = patientDetail[id].gender === "male" ? "mars" : "venus";
-
   return (
     <div className="App">
       <h1>{patientDetail[id].name} <Icon name={genderIcon} /></h1>
       <div>ssn: {patientDetail[id].ssn}</div>
       <div>occupation: {patientDetail[id].occupation}</div>
+      <h2>entries</h2>
+      {patientDetail[id].entries.map(e => 
+       <div key = {e.id}> <EntryDetails entry={e} /> </div>
+      )}
     </div>
   );
 };

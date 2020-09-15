@@ -1,7 +1,7 @@
-import patientsData from '../../data/patients.json';
-import { PatientsEntry, PatientsEntryNoSSN, NewPatientsEntry } from '../types';
+import loadedPatients from '../../data/patients';
+import { PatientsEntry, PatientsEntryNoSSN, NewPatientsEntry, Entry } from '../types';
 
-const patients: Array<PatientsEntry> = patientsData as Array<PatientsEntry>;
+let patients = loadedPatients;
 
 const getEntries = (): Array<PatientsEntryNoSSN> => {
   return patients.map(({id, name, dateOfBirth, gender, occupation }) => ({
@@ -27,8 +27,22 @@ const addPatient = ( entry: NewPatientsEntry ): PatientsEntry => {
   return newPatientEntry;
 };
 
+
+const addEntry = ( entry: Entry, patientID: string ) : PatientsEntry | undefined => {
+  const myPatient = getPatient(patientID);
+  if (myPatient){
+    myPatient.entries.push(entry);
+    patients = patients.map(p => p.id === patientID ? myPatient : p);
+  }
+  
+  return myPatient;
+};
+
+
+
 export default {
   getEntries,
   addPatient,
-  getPatient
+  getPatient,
+  addEntry
 };
