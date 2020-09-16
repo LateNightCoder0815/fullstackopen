@@ -108,8 +108,8 @@ export const toNewEntry = (object: any, id: string): Entry => {
       };
       if (object.sickLeave){
         resultOccupationalHealthcareEntry.sickLeave = {
-          startDate: parseDate(object.startDate),
-          endDate: parseDate(object.endDate)
+          startDate: parseDate(object.sickLeave.startDate),
+          endDate: parseDate(object.sickLeave.endDate)
         };
       }
       return resultOccupationalHealthcareEntry;
